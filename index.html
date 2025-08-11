@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Odia Dictionary Search</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; }
+    .input { width: 100%; max-width: 520px; font-size: 1.1rem; padding: .6rem .8rem; }
+    .card { max-width: 720px; padding: 1rem 1.2rem; border: 1px solid #e6e6e6; border-radius: 12px; margin-top: 1rem; }
+    .word { font-size: 1.6rem; font-weight: 700; }
+    .trans { color:#555; margin-top:.2rem }
+    .desc { margin-top:.6rem; line-height:1.6 }
+    .muted { color:#888 }
+  </style>
+</head>
+<body>
+  <h1>Odia Dictionary</h1>
+  <input id="q" class="input" placeholder="Type Odia word (e.g., ନବମୀ) or entity (e.g., &#28397;)" />
+  <div id="result" class="card muted">Type a word to search...</div>
+
+  <script type="module">
+    import { normalizeInput, isOdiaWord } from './normalize.js';
+
+    // Load dictionary (one time)
+    let dict = [];
+    let index = new Map(); // word -> array of entries (some pages have multiple)
+    fetch('./dictionary.json')
+      .then(r => r.json())
+      .then(data => {
+        dict = data;
+        for (const e of dict) {
+          if (!e.word) continue;
+          const key = e.word; // stored as UTF-8 in file; here it’s just a JS string
+          if (!index.has(key)) index.set(key, []);
+          index.get(key).push(e);
+        }
+        document.getElementById('result').textContent = 'Dictionary loaded. Type a word to search...';
+      });
+
+    const q = document.getElementById('q');
+    const result = document.getElementById('result');
+
+    function render(entries, query) {
+      if (!entries || entries.length === 0) {
+        result.innerHTML = `<div class="muted">No match found for: <b>${query}</b></div>`;
+        return;
+      }
+      const blocks = entries.slice(0, 10).map(e => `
+        <div class="word">${e.word}</div>
+        ${e.transliteration ? `<div class="trans">${e.transliteration}</div>` : ''}
+        ${e.description ? `<div class="desc">${e.description}</div>` : ''}
+        <div class="muted">page ${e.page}</div>
+        <hr style="border:none;border-top:1px dashed #ddd;margin:1rem 0" />
+      `).join('');
+      result.innerHTML = `<div>${blocks}</div>`;
+    }
+
+    q.addEventListener('input', () => {
+      const raw = q.value;
+      if (!raw.trim()) {
+        result.innerHTML = `<div class="muted">Type a word to search...</div>`;
+        return;
+      }
+      const normalized = normalizeInput(raw);
+      if (!isOdiaWord(normalized)) {
+        result.innerHTML = `<div class="muted">Input isn’t detected as Odia script after normalization. Try pasting the Odia word (ଓଡ଼ିଆ) or its HTML entity.</div>`;
+        return;
+      }
+      const entries = index.get(normalized) || null;
+      render(entries, normalized);
+    });
+  </script>
+</body>
+</html>
+
