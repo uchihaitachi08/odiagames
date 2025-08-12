@@ -33,15 +33,19 @@
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand">Odia Dictionary</div>
-    <div class="right">
-      <img id="avatar" class="avatar" alt="avatar" />
-      <span id="whoami" class="who"></span>
-      <button id="btn-google">Sign in with Google</button>
-      <button id="btn-logout" style="display:none;">Log out</button>
-    </div>
-  </header>
+<header>
+  <div class="brand">Odia Dictionary</div>
+  <nav style="display:flex; gap:16px; align-items:center; font-size:15px;">
+    <a href="index.html" style="text-decoration:none; color:var(--fg);">Home</a>
+    <a href="pick-verbs.html" style="text-decoration:none; color:var(--fg);">Pick Verbs</a>
+  </nav>
+  <div class="right">
+    <img id="avatar" class="avatar" alt="avatar" />
+    <span id="whoami" class="who"></span>
+    <button id="btn-google">Sign in with Google</button>
+    <button id="btn-logout" style="display:none;">Log out</button>
+  </div>
+</header>
 
   <div class="wrap">
     <div class="flex">
@@ -148,7 +152,7 @@
         if (!isOdiaWord(normalized)) {
   resultEl.innerHTML = `
   		<div style="display:flex;align-items:center;justify-content:center;height:100%;">
-      <img src="ErrorText.png" alt="🙂" style="max-width:50%;max-height:50%;object-fit:contain;">
+      <img src="ErrorText.svg" alt="🙂" style="max-width:50%;max-height:50%;object-fit:contain;">
     </div>
 	`;
   return;
