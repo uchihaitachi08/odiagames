@@ -146,10 +146,14 @@
       timer = setTimeout(() => {
         const normalized = normalizeInput(raw);
         if (!isOdiaWord(normalized)) {
-          resultEl.innerHTML = `<div class="muted">Input isn’t detected as Odia after normalization. Try pasting the Odia word (ଓଡ଼ିଆ) or its HTML entity.</div>`;
-          return;
-        }
-        const k1 = normalizeExact(raw);
+  resultEl.innerHTML = `
+  		<div style="display:flex;align-items:center;justify-content:center;height:100%;">
+      <img src="ErrorText.png" alt="🙂" style="max-width:50%;max-height:50%;object-fit:contain;">
+    </div>
+	`;
+  return;
+}
+	const k1 = normalizeExact(raw);
         let entries = indexExact.get(k1);
         if (!entries || entries.length === 0) {
           const k2 = normalizeCompact(raw);
